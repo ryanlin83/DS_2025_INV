@@ -75,7 +75,7 @@
 <h2>📦 單品編號查詢系統</h2>
 
 <div class="input-box">
-  <input id="inputCode" placeholder="例如：A12345" />
+  <input id="inputCode" placeholder="例如：14000001001" />
   <button onclick="searchItem()">查詢</button>
 </div>
 
@@ -93,22 +93,24 @@
   <tbody id="resultBody"></tbody>
 </table>
 
+<!-- 引入 PapaParse -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/export?format=csv&gid=0";
-
 let sheetData = [];
 
-fetch(SHEET_URL)
-  .then(res => res.text())
-  .then(csv => {
-    let rows = csv.trim().split("\n").map(r => r.split(","));
-    rows.shift(); // 移除標題列
-    sheetData = rows;
+// 使用 PapaParse 解析 CSV，確保中文及逗號不會出錯
+Papa.parse(SHEET_URL, {
+  download: true,
+  header: false,
+  complete: function(results) {
+    sheetData = results.data.slice(1); // 移除標題列
     document.getElementById("status").innerText = "資料載入完成，可開始查詢。";
-  })
-  .catch(err => {
+  },
+  error: function(err) {
     document.getElementById("status").innerText = "資料載入錯誤：" + err;
-  });
+  }
+});
 
 function searchItem() {
   const code = document.getElementById("inputCode").value.trim();

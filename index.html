@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>單品編號查詢系統</title>
+<title>盤點位置查詢</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 16px; background:#f5f6fa; }
-  h2 { margin-bottom: 14px; font-size:20px; }
+  body { font-family: Arial, sans-serif; padding: 16px; background:#f5f6fa; margin:0; }
+  h1 { font-size:28px; text-align:center; margin-bottom:8px; color:#2563eb; }
+  h2 { margin-bottom: 16px; font-size:22px; text-align:center; }
 
-  /* 手機友善輸入框區塊 */
+  /* 輸入區塊 */
   .input-box {
     display:flex;
     flex-direction:column;
@@ -17,55 +18,64 @@
   }
 
   input {
-    padding: 12px;
+    padding: 14px;
     width: 100%;
-    font-size:16px;
-    border:1px solid #ccc;
-    border-radius:8px;
+    font-size:18px;
+    border:2px solid #2563eb;
+    border-radius:10px;
+    box-sizing:border-box;
   }
 
   button {
-    padding: 12px;
+    padding: 14px;
     width:100%;
-    margin-top:4px;
     background:#2563eb;
     color:white;
     border:0;
-    border-radius:8px;
-    font-size:16px;
+    border-radius:10px;
+    font-size:18px;
     cursor:pointer;
   }
 
-  #status { margin-top:12px; color:#555; font-size:14px; }
+  #status { margin-top:12px; color:#2563eb; font-size:16px; text-align:center; }
 
-  /* 表格手機版採卡片式樣 */
+  /* 表格樣式 */
   table { width: 100%; border-collapse: collapse; margin-top: 20px; display:none; }
-  thead { display:none; }
-  tbody tr { background:white; padding:14px; border-radius:10px; margin-bottom:12px; display:block; box-shadow:0 2px 5px rgba(0,0,0,0.06); }
-  td { display:flex; justify-content:space-between; padding:6px 4px; border:0; font-size:15px; }
-  td::before{ content:attr(data-label); font-weight:600; color:#444; }
+  th, td {
+    border: 1px solid #2563eb;
+    padding: 12px;
+    font-size:16px;
+    color:#2563eb;
+    text-align:left;
+  }
+  th { background:#e0f0ff; }
 
-  @media (min-width:700px) {
-    body { padding: 30px; }
-
-    .input-box { flex-direction:row; align-items:center; gap:10px; }
-    input { width:260px; }
-    button { width:auto; padding:10px 16px; }
-
-    table { display:table; }
-    thead { display:table-header-group; }
-    tbody tr { display:table-row; box-shadow:none; border-bottom:1px solid #ddd; border-radius:0; }
-    td { display:table-cell; padding:10px; }
-    td::before { display:none; }
+  /* 手機版格子式 */
+  @media (max-width:700px) {
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+    thead { display: none; }
+    tr { margin-bottom:12px; border:2px solid #2563eb; border-radius:10px; padding:12px; background:white; }
+    td {
+      display:flex;
+      justify-content:space-between;
+      padding:10px;
+      border:none;
+      border-bottom:1px solid #2563eb;
+      font-size:18px;
+    }
+    td:last-child { border-bottom:none; }
+    td::before { content:attr(data-label); font-weight:600; margin-right:5px; width:40%; }
+    td span { width:55%; text-align:right; }
   }
 </style>
 </head>
 <body>
 
+<h1>盤點位置查詢</h1>
 <h2>📦 單品編號查詢系統</h2>
 
 <div class="input-box">
-  <input id="inputCode" placeholder="例如：14001001001" />
+  <input id="inputCode" placeholder="例如：A12345" />
   <button onclick="searchItem()">查詢</button>
 </div>
 
@@ -84,7 +94,6 @@
 </table>
 
 <script>
-// 使用 gid=0 的 CSV 讀取方式，避免中文工作表名稱問題
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/export?format=csv&gid=0";
 
 let sheetData = [];
@@ -124,15 +133,15 @@ function searchItem() {
   matches.forEach(row => {
     let tr = document.createElement("tr");
     tr.innerHTML = `
-      <td data-label="商品名稱">${row[1] || ""}</td>
-      <td data-label="貨架編號">${row[2] || ""}</td>
-      <td data-label="盤點位置">${row[3] || ""}</td>
-      <td data-label="數量">${row[4] || ""}</td>
+      <td data-label="商品名稱"><span>${row[1] || ""}</span></td>
+      <td data-label="盤點貨架編號"><span>${row[2] || ""}</span></td>
+      <td data-label="盤點位置"><span>${row[3] || ""}</span></td>
+      <td data-label="盤點數量"><span>${row[4] || ""}</span></td>
     `;
     tbody.appendChild(tr);
   });
 
-  table.style.display = "block";
+  table.style.display = "table";
   document.getElementById("status").innerText = `共 ${matches.length} 筆符合的資料。`;
 }
 </script>

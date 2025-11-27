@@ -65,7 +65,7 @@
 <h2>📦 單品編號查詢系統</h2>
 
 <div class="input-box">
-  <input id="inputCode" placeholder="例如：(部門+item code+sub code) 14001001001" />
+  <input id="inputCode" placeholder="例如：14001001001" />
   <button onclick="searchItem()">查詢</button>
 </div>
 
@@ -84,8 +84,8 @@
 </table>
 
 <script>
-// 使用新的工作表名稱 "P4資料庫"
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/edit#gid=0";
+// 使用 gid=0 的 CSV 讀取方式，避免中文工作表名稱問題
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/export?format=csv&gid=0";
 
 let sheetData = [];
 

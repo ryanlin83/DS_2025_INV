@@ -88,7 +88,7 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRos
 
 let sheetData = [];
 
-fetch(https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/edit?usp=sharing)
+fetch(https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:json&sheet=盤點貨架編號(from P4))
   .then(res => res.text())
   .then(csv => {
     let rows = csv.split("\n").map(r => r.split(","));

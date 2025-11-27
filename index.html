@@ -84,15 +84,14 @@
 </table>
 
 <script>
-// 正確的 Google Sheet gviz JSON 讀取網址
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:csv&sheet=盤點貨架編號(from P4)";
+// 使用新的工作表名稱 "P4資料庫"
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:csv&sheet=P4資料庫";
 
 let sheetData = [];
 
 fetch(SHEET_URL)
   .then(res => res.text())
   .then(csv => {
-    // 將 CSV 解析成陣列
     let rows = csv.trim().split("\n").map(r => r.split(","));
     rows.shift(); // 移除標題列
     sheetData = rows;

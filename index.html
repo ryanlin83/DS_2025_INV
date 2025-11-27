@@ -84,15 +84,17 @@
 </table>
 
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:csv";
+// 正確的 Google Sheet gviz JSON 讀取網址
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:csv&sheet=盤點貨架編號(from P4)";
 
 let sheetData = [];
 
-fetch(https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:json&sheet=盤點貨架編號(from P4))
+fetch(SHEET_URL)
   .then(res => res.text())
   .then(csv => {
-    let rows = csv.split("\n").map(r => r.split(","));
-    rows.shift(); 
+    // 將 CSV 解析成陣列
+    let rows = csv.trim().split("\n").map(r => r.split(","));
+    rows.shift(); // 移除標題列
     sheetData = rows;
     document.getElementById("status").innerText = "資料載入完成，可開始查詢。";
   })

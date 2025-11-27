@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>單品編號查詢系統</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 16px; background:#f5f6fa; }
+  h2 { margin-bottom: 14px; font-size:20px; }
+
+  /* 手機友善輸入框區塊 */
+  .input-box {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:16px;
+  }
+
+  input {
+    padding: 12px;
+    width: 100%;
+    font-size:16px;
+    border:1px solid #ccc;
+    border-radius:8px;
+  }
+
+  button {
+    padding: 12px;
+    width:100%;
+    margin-top:4px;
+    background:#2563eb;
+    color:white;
+    border:0;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+  }
+
+  #status { margin-top:12px; color:#555; font-size:14px; }
+
+  /* 表格手機版採卡片式樣 */
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; display:none; }
+  thead { display:none; }
+  tbody tr { background:white; padding:14px; border-radius:10px; margin-bottom:12px; display:block; box-shadow:0 2px 5px rgba(0,0,0,0.06); }
+  td { display:flex; justify-content:space-between; padding:6px 4px; border:0; font-size:15px; }
+  td::before{ content:attr(data-label); font-weight:600; color:#444; }
+
+  @media (min-width:700px) {
+    body { padding: 30px; }
+
+    .input-box { flex-direction:row; align-items:center; gap:10px; }
+    input { width:260px; }
+    button { width:auto; padding:10px 16px; }
+
+    table { display:table; }
+    thead { display:table-header-group; }
+    tbody tr { display:table-row; box-shadow:none; border-bottom:1px solid #ddd; border-radius:0; }
+    td { display:table-cell; padding:10px; }
+    td::before { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<h2>📦 單品編號查詢系統</h2>
+
+<div class="input-box">
+  <input id="inputCode" placeholder="例如：A12345" />
+  <button onclick="searchItem()">查詢</button>
+</div>
+
+<div id="status">資料載入中…</div>
+
+<table id="resultTable">
+  <thead>
+    <tr>
+      <th>商品名稱</th>
+      <th>盤點貨架編號</th>
+      <th>盤點位置</th>
+      <th>盤點數量</th>
+    </tr>
+  </thead>
+  <tbody id="resultBody"></tbody>
+</table>
+
+<script>
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1jkc2FzmhLhj9mtqsyVRosECGRlRUURjZlaGK_auhpMM/gviz/tq?tqx=out:csv";
+
+let sheetData = [];
+
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(csv => {
+    let rows = csv.split("\n").map(r => r.split(","));
+    rows.shift(); 
+    sheetData = rows;
+    document.getElementById("status").innerText = "資料載入完成，可開始查詢。";
+  })
+  .catch(err => {
+    document.getElementById("status").innerText = "資料載入錯誤：" + err;
+  });
+
+function searchItem() {
+  const code = document.getElementById("inputCode").value.trim();
+  const tbody = document.getElementById("resultBody");
+  const table = document.getElementById("resultTable");
+
+  tbody.innerHTML = "";
+  table.style.display = "none";
+
+  if (!code) {
+    document.getElementById("status").innerText = "請輸入單品編號。";
+    return;
+  }
+
+  const matches = sheetData.filter(row => row[0] === code);
+
+  if (matches.length === 0) {
+    document.getElementById("status").innerText = "查無資料！";
+    return;
+  }
+
+  matches.forEach(row => {
+    let tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td data-label="商品名稱">${row[1] || ""}</td>
+      <td data-label="貨架編號">${row[2] || ""}</td>
+      <td data-label="盤點位置">${row[3] || ""}</td>
+      <td data-label="數量">${row[4] || ""}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  table.style.display = "block";
+  document.getElementById("status").innerText = `共 ${matches.length} 筆符合的資料。`;
+}
+</script>
+
+</body>
+</html>
